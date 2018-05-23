@@ -1,5 +1,8 @@
 {   "name": "Colombia",
     "geo_locations": [
+            {"name": "cities", "values":[{"distance_unit":"kilometer","key":"458130","name":"Bogotá","region":"Distrito Especial","region_id":"747","radius":"0","country":"CO"}], "location_types" : ["home"]},
+            {"name": "cities", "values":[{"distance_unit":"kilometer","key":"458130","name":"Bogotá","region":"Distrito Especial","region_id":"747","radius":"0","country":"CO"}], "location_types" : ["home","recent"]},
+            {"name": "cities", "values":[{"distance_unit":"kilometer","key":"458130","name":"Bogotá","region":"Distrito Especial","region_id":"747","radius":"0","country":"CO"}], "location_types" : ["recent"]},
         {"name": "cities", "values":[
             {"distance_unit":"kilometer","key":"461151","name":"Convención","region":"Norte de Santander","region_id":"734","radius":"0","country":"CO"}, 
             {"distance_unit":"kilometer","key":"462702","name":"El Carmen","region":"Norte de Santander","region_id":"734","radius":"0","country":"CO"},
