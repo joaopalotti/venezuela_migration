@@ -89,7 +89,7 @@
       {"name": "cities", "values":[{"distance_unit":"kilometer","key":"481063","name":"Uribia","region":"La Guajira","region_id":"730","radius":"0","country":"CO"}], "location_types" : ["recent"]},
       {"name": "cities", "values":[{"distance_unit":"kilometer","key":"481063","name":"Uribia","region":"La Guajira","region_id":"730","radius":"0","country":"CO"}], "location_types" : ["home","recent"]},
       {"name": "countries", "values": ["CO"], "location_types": ["home"]}, 
-      {"name": "countries", "values": ["CO"], "location_types": ["rencent"]},
+      {"name": "countries", "values": ["CO"], "location_types": ["recent"]},
       {"name": "countries", "values": ["CO"], "location_types": ["home","recent"]},
       {"name": "cities", "values":[{"distance_unit":"kilometer","key":"461869","name":"Cúcuta","region":"Norte de Santander","region_id":"734","radius":"0","country":"CO"}], "location_types" : ["home"]},
       {"name": "cities", "values":[{"distance_unit":"kilometer","key":"461869","name":"Cúcuta","region":"Norte de Santander","region_id":"734","radius":"0","country":"CO"}], "location_types" : ["recent"]},

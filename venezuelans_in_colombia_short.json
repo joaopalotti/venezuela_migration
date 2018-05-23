@@ -61,7 +61,7 @@
       {"name": "cities", "values":[{"distance_unit":"kilometer","key":"481063","name":"Uribia","region":"La Guajira","region_id":"730","radius":"0","country":"CO"}], "location_types" : ["recent"]},
       {"name": "cities", "values":[{"distance_unit":"kilometer","key":"481063","name":"Uribia","region":"La Guajira","region_id":"730","radius":"0","country":"CO"}], "location_types" : ["home","recent"]},
       {"name": "countries", "values": ["CO"], "location_types": ["home"]}, 
-      {"name": "countries", "values": ["CO"], "location_types": ["rencent"]},
+      {"name": "countries", "values": ["CO"], "location_types": ["recent"]},
       {"name": "countries", "values": ["CO"], "location_types": ["home","recent"]},
       {"name": "regions", "values":[{"key":"716", "country_code":"CO", "name": "Amazonas"}], "location_types" : ["home"]},
       {"name": "regions", "values":[{"key":"716", "country_code":"CO", "name": "Amazonas"}], "location_types" : ["recent"]},
