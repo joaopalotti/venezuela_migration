@@ -27,6 +27,7 @@ df_error["dau_audience"] = df_error["dau_audience"].where(df_error["dau_audience
 del df_error["mau_audience_fixed"]
 del df_error["dau_audience_fixed"]
 del df_error["tupled"]
+del df_error["Unnamed: 0"]
 
 df_error.to_csv(file_with_error + ".fixed")
-
+print("Created " + file_with_error + ".fixed")
