@@ -1,15 +1,16 @@
 import pandas as pd
 import numpy as np
-import sys, os
+import sys
 import ast
 from pysocialwatcher import watcherAPI
 
 if len(sys.argv) < 1:
     print("%s <finished_collection>" % (sys.argv[0]))
-    os.exit(1)
+    sys.exit(1)
 
 infile = sys.argv[1]
-countries_to_try = ["KE", "AU", "JP", "BR", "CO"]
+countries_to_try = ["CR", "UY", "BO", "BR", "FR", "AR"]
+#countries_to_try = ["BR", "CR"]
 
 # Should we stop re-issuing a query once we found a better estimate for it?
 single_estimation = True
@@ -18,7 +19,7 @@ df = pd.read_csv(infile)
 
 watcher = watcherAPI()
 watcher.config(sleep_time=0, save_every=1000)
-watcher.load_credentials_file("./credentials.csv")
+watcher.load_credentials_file("./credentials_masoomali.csv")
 
 def prepare_to_reissue(df):
     df["response"] = None
@@ -127,48 +128,50 @@ for country in countries_to_try:
         print("Ignoring country %s and continuing..." % (country))
         continue
 
-    print("in country:", df1000_in_country["mau_audience"])
-    print("add country:", df1000_add_country["mau_audience"])
-    print(df1000_add_country["mau_audience"] - df1000_in_country["mau_audience"])
+    #print("in country:", df1000_in_country["mau_audience"])
+    #print("add country:", df1000_add_country["mau_audience"])
+    #print(df1000_add_country["mau_audience"] - df1000_in_country["mau_audience"])
 
-    estimates = df1000_add_country["mau_audience"] - df1000_in_country["mau_audience"]
+    # We first check if these estimates are good... Both datasets need to have more than 1000 and less than 10000
+    valid = (df1000_in_country["mau_audience"] > 1000) & (df1000_in_country["mau_audience"] < 10000) &\
+            (df1000_add_country["mau_audience"] > 1000) & (df1000_add_country["mau_audience"] < 10000) &\
+            (df1000_add_country["mau_audience"] >= df1000_in_country["mau_audience"])
+    valid_estimate.append(valid)
+
+    valid_add = df1000_add_country[valid]
+    valid_in = df1000_in_country[valid]
+
+    estimates = valid_add["mau_audience"] - valid_in["mau_audience"]
     estimates.name = country
 
     list_estimates.append(estimates)
 
-    # if estimate is 0, it might be because of two reasons:
-    # (1) the estimate is lost in the precision for the country.
-    # That happens when the query finds more that 10k people for a given query in a country. All that we can do about it is to ignore this country and try another one.
-    # (2) the estimate is really 0. That happens when the query finds less than 10k people. In this situation it does not matter if we change the country, we will still get a 0.
-    # We save the results to know if we should flag an error or just informe that the audience is really 0.
-    valid_estimate.append((df1000_in_country["mau_audience"] > 1000) & (df1000_in_country["mau_audience"] < 10000))
-
-res = pd.DataFrame(list_estimates).T
-result = res.replace(0, np.nan).mean(axis=1)
-
-if result.shape[0] != queries_need_better_estimate:
-    print("ERROR: We could not find estimators for all the regions. Try increasing the number of countries used as input. Currently using %s" % (countries_to_try))
-    print("Exiting without saving output file...")
-    os.exit(1)
-
-# If any row of less10k is True, we can say that a 0 means that 0 people were in the location for a given query.
+# We say we got a valid estimate for a row if any auxiliary estimate is valid
 valid = pd.DataFrame(valid_estimate).T
 valid = valid.any(axis=1)
 
-still_can_get_better_estimates = result[((result == 0) | (result.isnull())) & (~valid)]
+res = pd.DataFrame(list_estimates).T
+result = res.mean(axis=1)
+
+if result.shape[0] != queries_need_better_estimate:
+    print("WARNIG: We could not find estimators for all the regions. Try increasing the number of countries used as input. Currently using %s" % (countries_to_try))
+    #print("Exiting without saving output file...")
+    #sys.exit(1)
+
+still_can_get_better_estimates = valid[~valid]
 
 if not still_can_get_better_estimates.empty:
-    print("There are still %d queries that we could not find better estimates." % (still_can_get_better_estimates.shape[0]))
+    print("Found better estimates to %d queries." % (result.shape[0]))
+    print("There are still %d queries that we could not find any valid estimate." % (still_can_get_better_estimates.shape[0]))
     print("Take a look at these indices: ", (still_can_get_better_estimates.index.values))
 
 # These are the queries that we can safely replace in the input dataset
-final_result = result[valid]
-df.loc[final_result.index, "mau_audience"] = final_result
+df.loc[result.index, "mau_audience"] = result
 
 savefile = "%s.betterestimate" % (infile)
 df.to_csv(savefile)
 
-print("Saved better estimates for %d out of %d queries in file '%s'..." % (final_result.shape[0], queries_need_better_estimate, savefile))
+print("Saved better estimates for %d out of %d queries in file '%s'..." % (result.shape[0], queries_need_better_estimate, savefile))
 print("Done.")
 
 
