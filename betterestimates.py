@@ -10,7 +10,6 @@ if len(sys.argv) < 1:
 
 infile = sys.argv[1]
 countries_to_try = ["CR", "UY", "BO", "BR", "FR", "AR"]
-#countries_to_try = ["BR", "CR"]
 
 # Should we stop re-issuing a query once we found a better estimate for it?
 single_estimation = True
@@ -128,11 +127,13 @@ for country in countries_to_try:
         print("Ignoring country %s and continuing..." % (country))
         continue
 
+<<<<<<< Updated upstream
     #print("in country:", df1000_in_country["mau_audience"])
     #print("add country:", df1000_add_country["mau_audience"])
     #print(df1000_add_country["mau_audience"] - df1000_in_country["mau_audience"])
 
     # We first check if these estimates are good... Both datasets need to have more than 1000 and less than 10000
+<<<<<<< Updated upstream
     valid = (df1000_in_country["mau_audience"] > 1000) & (df1000_in_country["mau_audience"] < 10000) &\
             (df1000_add_country["mau_audience"] > 1000) & (df1000_add_country["mau_audience"] < 10000) &\
             (df1000_add_country["mau_audience"] >= df1000_in_country["mau_audience"])
@@ -141,11 +142,31 @@ for country in countries_to_try:
     valid_add = df1000_add_country[valid]
     valid_in = df1000_in_country[valid]
 
+=======
+=======
+    print("in country:", df1000_in_country["mau_audience"])
+    print("add country:", df1000_add_country["mau_audience"])
+    print(df1000_add_country["mau_audience"] - df1000_in_country["mau_audience"])
+
+    # We first check if these estimates are good... Both datasets need to have more than 1000 and less than 10000
+>>>>>>> Stashed changes
+    valid = (df1000_in_country["mau_audience"] > 1000) & (df1000_in_country["mau_audience"] < 10000) & (df1000_add_country["mau_audience"] > 1000) & (df1000_add_country["mau_audience"] < 10000)
+    valid_estimate.append(valid)
+    
+    valid_add = df1000_add_country[valid]
+    valid_in = df1000_in_country[valid]
+    
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
     estimates = valid_add["mau_audience"] - valid_in["mau_audience"]
     estimates.name = country
 
     list_estimates.append(estimates)
 
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 # We say we got a valid estimate for a row if any auxiliary estimate is valid
 valid = pd.DataFrame(valid_estimate).T
 valid = valid.any(axis=1)
@@ -157,6 +178,21 @@ if result.shape[0] != queries_need_better_estimate:
     print("WARNIG: We could not find estimators for all the regions. Try increasing the number of countries used as input. Currently using %s" % (countries_to_try))
     #print("Exiting without saving output file...")
     #sys.exit(1)
+=======
+=======
+>>>>>>> Stashed changes
+res = pd.DataFrame(list_estimates).T
+result = res.replace(0, np.nan).mean(axis=1) # difference between nan and zero.
+
+if result.shape[0] != queries_need_better_estimate:
+    print("ERROR: We could not find estimators for all the regions. Try increasing the number of countries used as input. Currently using %s" % (countries_to_try))
+    #print("Exiting without saving output file...")
+    #sys.exit(1)
+
+# If any row of less10k is True, we can say that a 0 means that 0 people were in the location for a given query.
+valid = pd.DataFrame(valid_estimate).T
+valid = valid.any(axis=1)
+>>>>>>> Stashed changes
 
 still_can_get_better_estimates = valid[~valid]
 

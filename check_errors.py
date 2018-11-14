@@ -23,7 +23,9 @@ df_old["tupled"] = df_old["targeting"].apply(lambda x: json.dumps(x, sort_keys=T
 
 merged = pd.merge(df_new[["mau_audience","dau_audience","tupled"]], df_old[["mau_audience","dau_audience","tupled"]], on=[u'tupled'], suffixes=("_new", "_old"))
 
-withproblem = merged[(np.abs(merged["mau_audience_new"] - merged["mau_audience_old"]) > 5000) & ((merged["mau_audience_new"] <= 1000) & (merged["mau_audience_old"] >= 1000))]["tupled"].reset_index()
+withproblem = merged[((np.abs(merged["mau_audience_new"] - merged["mau_audience_old"]) > 5000) & ((merged["mau_audience_new"] <= 1000) & (merged["mau_audience_old"] >= 1000)))
+                    | ((merged["mau_audience_new"] <= merged["dau_audience_new"]) & (merged["mau_audience_new"] <= 1000))
+                    | ((merged["dau_audience_new"] - merged["dau_audience_old"] > 5000) & (merged["dau_audience_new"] <= 1000)) ]["tupled"].reset_index()
 
 reissue = pd.merge(df_new, withproblem, on =["tupled"])
 
