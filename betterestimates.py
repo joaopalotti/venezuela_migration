@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 import sys
 import ast
 import json
@@ -9,13 +8,13 @@ from pysocialwatcher import watcherAPI
 import requests
 requests.packages.urllib3.disable_warnings()
 
-# To create a cache that verifies if a query is useless
-import redis
 
 usingCache = True
 expiration_in_sec = 432000 # 5 days -> 432000
 
 if usingCache:
+    # To create a cache that verifies if a query is useless
+    import redis
     r = redis.Redis(host='localhost', port=6379, db=0)
 
 if len(sys.argv) < 1:
@@ -23,8 +22,7 @@ if len(sys.argv) < 1:
     sys.exit(1)
 
 infile = sys.argv[1]
-#countries_to_try = ["CR", "UY", "BO", "BR", "FR", "AR"]
-countries_to_try = ["CR", "UY"]
+countries_to_try = ["CR", "UY", "BO", "BR", "FR", "AR"]
 
 # Should we stop re-issuing a query once we found a better estimate for it?
 single_estimation = True
