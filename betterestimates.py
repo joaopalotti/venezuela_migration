@@ -2,14 +2,29 @@ import pandas as pd
 import numpy as np
 import sys
 import ast
+import json
 from pysocialwatcher import watcherAPI
+
+# To avoid warinings from old python instalations
+import requests
+requests.packages.urllib3.disable_warnings()
+
+# To create a cache that verifies if a query is useless
+import redis
+
+usingCache = True
+expiration_in_sec = 432000 # 5 days -> 432000
+
+if usingCache:
+    r = redis.Redis(host='localhost', port=6379, db=0)
 
 if len(sys.argv) < 1:
     print("%s <finished_collection>" % (sys.argv[0]))
     sys.exit(1)
 
 infile = sys.argv[1]
-countries_to_try = ["CR", "UY", "BO", "BR", "FR", "AR"]
+#countries_to_try = ["CR", "UY", "BO", "BR", "FR", "AR"]
+countries_to_try = ["CR", "UY"]
 
 # Should we stop re-issuing a query once we found a better estimate for it?
 single_estimation = True
@@ -66,8 +81,44 @@ def check_overlap(row):
     # if everything is okay, I just return the original row
     return row
 
+def save_partial_results(df, result, infile):
 
-df1000 = df.copy()
+    res = pd.DataFrame(list_estimates).T
+    result = res.mean(axis=1)
+
+    # These are the queries that we can safely replace in the input dataset
+    df.loc[result.index, "mau_audience"] = result
+
+    savefile = "%s.betterestimate" % (infile)
+    df.to_csv(savefile)
+
+    print("Saved better estimates for %d queries in file '%s'..." % (result.shape[0], savefile))
+
+    return result
+
+def is_bad_country(key, country):
+    countries = str_to_set(r.get(key))
+    if countries is None:
+        return False
+    if country in countries:
+        return True
+    return False
+
+def append_redis(key, country):
+    countries = str_to_set(r.get(key))
+    if not countries:
+        countries = set([])
+    countries.add(country)
+    r.set(key, set_to_str(countries), ex=expiration_in_sec)
+
+def set_to_str(s):
+    if s:
+        return "_".join(s)
+
+def str_to_set(s):
+    if s:
+        return set(s.split("_"))
+
 list_estimates = []
 valid_estimate = [] # checks if a new estimate is in between 1001 and 9999.
 
@@ -77,18 +128,27 @@ total_queries = df.shape[0]
 print("We found %d (%.3f) queries in the input file have an estimated audience of 1000 people. Trying to find better estimates using the following countries (%s)" %
         (queries_need_better_estimate, 1.0 * queries_need_better_estimate / total_queries, countries_to_try))
 
+
 for country in countries_to_try:
 
     print ("USING COUNTRY: ", country)
-    df1000 = df1000[df1000["mau_audience"] <= 1000].copy()
+    df1000 = df[df["mau_audience"] <= 1000].copy()
+    valid = pd.Series(False, index=df1000.index)
 
     if single_estimation:
-        # In this case, we should avoid re-issueing queries that we already have a better valid estimation
+        # In this case, we should avoid re-issueing queries that we have a valid estimate
         if len(valid_estimate) > 0:
             tmpvalid = pd.DataFrame(valid_estimate).T
             tmpvalid = tmpvalid.any(axis=1)
-            # Issues queries only to the ones that we do not have info yet
+            # Issues only the queries that we do not have info yet
             df1000 = df1000[~tmpvalid]
+
+    if usingCache:
+        # if using the cache, we need the tupled version to be able to save a string in redis
+        df1000["tupled"] = df1000["targeting"].apply(lambda x: json.dumps(x, sort_keys=True))
+
+        # Only keep the rows that we have never explored
+        df1000 = df1000[~df1000["tupled"].apply(lambda x: is_bad_country(x, country))]
 
     df1000_in_country = df1000.copy(deep=True)
     df1000_add_country = df1000.copy(deep=True)
@@ -132,25 +192,34 @@ for country in countries_to_try:
     #print(df1000_add_country["mau_audience"] - df1000_in_country["mau_audience"])
 
     # We first check if these estimates are good... Both datasets need to have more than 1000 and less than 10000
-    valid = (df1000_in_country["mau_audience"] > 1000) & (df1000_in_country["mau_audience"] < 10000) &\
+    v = (df1000_in_country["mau_audience"] > 1000) & (df1000_in_country["mau_audience"] < 10000) &\
             (df1000_add_country["mau_audience"] > 1000) & (df1000_add_country["mau_audience"] < 10000) &\
             (df1000_add_country["mau_audience"] >= df1000_in_country["mau_audience"])
+    # Updates the series keeping the correct indices (sync'ed with df1000)
+    valid.update(v)
+
     valid_estimate.append(valid)
 
     valid_add = df1000_add_country[valid]
     valid_in = df1000_in_country[valid]
-    
+
+    if usingCache:
+        # Informe redis that these tuples could not find good results
+        bad_queries = df1000[~v]
+        bad_queries["tupled"].apply(lambda x: append_redis(x, country))
+
     estimates = valid_add["mau_audience"] - valid_in["mau_audience"]
     estimates.name = country
 
     list_estimates.append(estimates)
 
+    print("Finished collection for %s. Saving partial results." % (country))
+    # Save the results given the current list of estimates
+    result = save_partial_results(df, list_estimates, infile)
+
 # We say we got a valid estimate for a row if any auxiliary estimate is valid
 valid = pd.DataFrame(valid_estimate).T
 valid = valid.any(axis=1)
-
-res = pd.DataFrame(list_estimates).T
-result = res.mean(axis=1)
 
 if result.shape[0] != queries_need_better_estimate:
     print("WARNIG: We could not find estimators for all the regions. Try increasing the number of countries used as input. Currently using %s" % (countries_to_try))
@@ -164,12 +233,7 @@ if not still_can_get_better_estimates.empty:
     print("There are still %d queries that we could not find any valid estimate." % (still_can_get_better_estimates.shape[0]))
     print("Take a look at these indices: ", (still_can_get_better_estimates.index.values))
 
-# These are the queries that we can safely replace in the input dataset
-df.loc[result.index, "mau_audience"] = result
-
-savefile = "%s.betterestimate" % (infile)
-df.to_csv(savefile)
-
-print("Saved better estimates for %d out of %d queries in file '%s'..." % (result.shape[0], queries_need_better_estimate, savefile))
+save_partial_results(df, result, infile)
+print("Saved better estimates for %d out of %d queries." % (result.shape[0], queries_need_better_estimate))
 print("Done.")
 
