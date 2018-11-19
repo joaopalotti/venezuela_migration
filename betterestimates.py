@@ -213,7 +213,7 @@ for country in countries_to_try:
 
     print("Finished collection for %s. Saving partial results." % (country))
     # Save the results given the current list of estimates
-    result = save_partial_results(df, list_estimates, infile)
+    result = save_partial_results(df, list_estimates, infile + "_" + country)
 
 # We say we got a valid estimate for a row if any auxiliary estimate is valid
 valid = pd.DataFrame(valid_estimate).T
