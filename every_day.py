@@ -8,15 +8,15 @@ from pysocialwatcher import constants
 import requests
 requests.packages.urllib3.disable_warnings()
 
-constants.SLEEP_TIME = 0
-constants.SAVE_EVERY = 5000
+watcherAPI.config(sleep_time=0, save_every=5000)
 
-credential_file = sys.argv[1]
+credential_file = None if len(sys.argv) < 1 else sys.argv[1]
 
 watcher = watcherAPI()
-#watcher.load_credentials_file("/home/local/QCRI/jpalotti/github/venezuela_migration/credentials.csv")
-#watcher.load_credentials_file("/home/local/QCRI/jpalotti/github/venezuela_migration/credentials_masoomali.csv")
-watcher.load_credentials_file(credential_file)
+if not credential_file:
+    watcher.load_credentials_file("/home/local/QCRI/jpalotti/github/venezuela_migration/credentials.csv")
+else:
+    watcher.load_credentials_file(credential_file)
 
 df = watcher.run_data_collection("/home/local/QCRI/jpalotti/github/venezuela_migration/jsons/main_collection.json")
 
