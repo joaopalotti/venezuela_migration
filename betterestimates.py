@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 import sys
 import ast
 import json
@@ -9,8 +8,6 @@ from pysocialwatcher import watcherAPI
 import requests
 requests.packages.urllib3.disable_warnings()
 
-# To create a cache that verifies if a query is useless
-import redis
 
 usingCache = True
 expiration_in_sec =  2.592e+6
@@ -19,6 +16,8 @@ expiration_in_sec =  2.592e+6
 # 30 days -> 2.592e+6
 
 if usingCache:
+    # To create a cache that verifies if a query is useless
+    import redis
     r = redis.Redis(host='localhost', port=6379, db=0)
 
 if len(sys.argv) < 1:
