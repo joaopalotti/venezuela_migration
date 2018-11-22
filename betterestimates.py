@@ -13,7 +13,10 @@ requests.packages.urllib3.disable_warnings()
 import redis
 
 usingCache = True
-expiration_in_sec = 432000 # 5 days -> 432000
+expiration_in_sec =  2.592e+6
+# Some options:
+# 5 days -> 432000
+# 30 days -> 2.592e+6
 
 if usingCache:
     r = redis.Redis(host='localhost', port=6379, db=0)
@@ -23,8 +26,7 @@ if len(sys.argv) < 1:
     sys.exit(1)
 
 infile = sys.argv[1]
-#countries_to_try = ["CR", "UY", "BO", "BR", "FR", "AR"]
-countries_to_try = ["CR", "UY"]
+countries_to_try = ["CR", "UY", "BO", "BR", "FR", "AR"]
 
 # Should we stop re-issuing a query once we found a better estimate for it?
 single_estimation = True
@@ -215,7 +217,7 @@ for country in countries_to_try:
 
     print("Finished collection for %s. Saving partial results." % (country))
     # Save the results given the current list of estimates
-    result = save_partial_results(df, list_estimates, infile)
+    result = save_partial_results(df, list_estimates, infile + "_" + country + "_")
 
 # We say we got a valid estimate for a row if any auxiliary estimate is valid
 valid = pd.DataFrame(valid_estimate).T
