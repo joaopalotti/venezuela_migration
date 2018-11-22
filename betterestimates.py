@@ -20,7 +20,7 @@ if usingCache:
     import redis
     r = redis.Redis(host='localhost', port=6379, db=0)
 
-if len(sys.argv) < 1:
+if len(sys.argv) <= 1:
     print("%s <finished_collection>" % (sys.argv[0]))
     sys.exit(1)
 

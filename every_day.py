@@ -10,7 +10,7 @@ requests.packages.urllib3.disable_warnings()
 
 watcherAPI.config(sleep_time=0, save_every=5000)
 
-credential_file = None if len(sys.argv) < 1 else sys.argv[1]
+credential_file = None if len(sys.argv) <= 1 else sys.argv[1]
 
 watcher = watcherAPI()
 if not credential_file:
