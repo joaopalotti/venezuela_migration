@@ -17,7 +17,7 @@ PATH_TO_CREDENTIALS = "~/github/venezuela_migration/credentials_masoomali.csv"
 watcher = watcherAPI()
 
 constants.TOKENS = []
-constants.SLEEP_TIME = 6
+constants.SLEEP_TIME = 0
 
 #utime = re.findall(r'\d+', infile)[0]
 #constants.UNIQUE_TIME_ID = utime

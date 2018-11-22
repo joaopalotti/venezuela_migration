@@ -1,0 +1,9 @@
+python auxiliary.py 1 credentials_masoomali.csv;  # 1428 calls
+python auxiliary.py 2 credentials_masoomali.csv;  # 952 calls
+python auxiliary.py 3 credentials_masoomali.csv;  # 1692 calls
+python auxiliary.py 4 credentials_masoomali.csv;  # 2304 calls
+python auxiliary.py 5 credentials_masoomali.csv;  # 2499 calls
+python auxiliary.py 6 credentials_masoomali.csv;  # 61056 calls
+python auxiliary.py 7 credentials_masoomali.csv;  # 318780 calls
+python auxiliary.py 8 credentials_masoomali.csv;  # 3234 calls
+time python every_day.py credentials_masoomali.csv; # 137088 calls
