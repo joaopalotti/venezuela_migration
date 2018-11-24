@@ -21,9 +21,6 @@ file_with_fix = sys.argv[2]
 df_error = pd.read_csv(file_with_error)
 df_fix = pd.read_csv(file_with_fix)
 
-df_fix["targeting"] = df_fix["targeting"].apply(lambda x : ast.literal_eval(x))
-df_error["targeting"] = df_error["targeting"].apply(lambda x : ast.literal_eval(x))
-
 df_fix["tupled"] = df_fix["targeting"].apply(lambda x: str(ordered(ast.literal_eval(x))))
 df_error["tupled"] = df_error["targeting"].apply(lambda x: str(ordered(ast.literal_eval(x))))
 
