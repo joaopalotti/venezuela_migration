@@ -23,9 +23,6 @@ file_new = sys.argv[2]
 df_new = pd.read_csv(file_new)
 df_old = pd.read_csv(file_old)
 
-df_new["targeting"] = df_new["targeting"].apply( lambda x : ast.literal_eval(x) )
-df_old["targeting"] = df_old["targeting"].apply( lambda x : ast.literal_eval(x) )
-
 df_new["tupled"] = df_fix["targeting"].apply(lambda x: str(ordered(ast.literal_eval(x))))
 df_old["tupled"] = df_error["targeting"].apply(lambda x: str(ordered(ast.literal_eval(x))))
 
