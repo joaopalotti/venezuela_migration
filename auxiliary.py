@@ -23,7 +23,7 @@ if not credential_file:
 else:
     watcher.load_credentials_file(credential_file)
 
-stropt = ["", "married", "pendular", "devices", "devices_ven", "immigrants", "colombia_short", "immigrants_global", "syrians"]
+stropt = ["", "married", "pendular", "devices", "devices_ven", "immigrants", "colombia_short", "immigrants_global", "syrians", "boavista"]
 
 if option == 1:
     df = watcher.run_data_collection("/home/local/QCRI/jpalotti/github/venezuela_migration/jsons/married.json")
@@ -41,6 +41,8 @@ elif option == 7:
     df = watcher.run_data_collection("/home/local/QCRI/jpalotti/github/venezuela_migration/jsons/immigrants_global.json")
 elif option == 8:
     df = watcher.run_data_collection("/home/local/QCRI/jpalotti/github/venezuela_migration/jsons/syrians.json")
+elif option == 9:
+    df = watcher.run_data_collection("/home/local/QCRI/jpalotti/github/venezuela_migration/jsons/boavista.json")
 
 time = constants.UNIQUE_TIME_ID
 print("UNIQUE_TIME_ID: %s" % (time) )
