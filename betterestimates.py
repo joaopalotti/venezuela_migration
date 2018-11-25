@@ -8,9 +8,8 @@ from pysocialwatcher import watcherAPI
 import requests
 requests.packages.urllib3.disable_warnings()
 
-
 usingCache = True
-expiration_in_sec =  2.592e+6
+expiration_in_sec =  2592000
 # Some options:
 # 5 days -> 432000
 # 30 days -> 2.592e+6
@@ -19,13 +18,15 @@ if usingCache:
     # To create a cache that verifies if a query is useless
     import redis
     r = redis.Redis(host='localhost', port=6379, db=0)
+    print("Using Redis as a cache to avoid unfruitful API calls.")
 
 if len(sys.argv) <= 1:
     print("%s <finished_collection>" % (sys.argv[0]))
     sys.exit(1)
 
 infile = sys.argv[1]
-countries_to_try = ["CR", "UY", "BO", "BR", "FR", "AR"]
+countries_to_try = ["CR", "UY"]
+#countries_to_try = ["CR", "UY", "BO", "BR", "FR", "AR"]
 
 # Should we stop re-issuing a query once we found a better estimate for it?
 single_estimation = True
@@ -33,7 +34,7 @@ single_estimation = True
 df = pd.read_csv(infile)
 
 watcher = watcherAPI()
-watcher.config(sleep_time=0, save_every=1000)
+watcher.config(sleep_time=0, save_every=5000)
 watcher.load_credentials_file("./credentials_masoomali.csv")
 
 def prepare_to_reissue(df):
@@ -110,7 +111,8 @@ def append_redis(key, country):
     if not countries:
         countries = set([])
     countries.add(country)
-    r.set(key, set_to_str(countries), ex=expiration_in_sec)
+    #print("Adding key: ", key, " - countries:", set_to_str(countries))
+    return r.set(key, set_to_str(countries), expiration_in_sec)
 
 def set_to_str(s):
     if s:
@@ -120,13 +122,21 @@ def str_to_set(s):
     if s:
         return set(s.split("_"))
 
+def ordered(obj):
+    if isinstance(obj, dict):
+        return sorted((k, ordered(v)) for k, v in obj.items())
+    if isinstance(obj, list):
+        return sorted(ordered(x) for x in obj)
+    else:
+        return obj
+
 list_estimates = []
 valid_estimate = [] # checks if a new estimate is in between 1001 and 9999.
 
 queries_need_better_estimate = df[df["mau_audience"] <= 1000].shape[0]
 total_queries = df.shape[0]
 
-print("We found %d (%.3f) queries in the input file have an estimated audience of 1000 people. Trying to find better estimates using the following countries (%s)" %
+print("%d (%.3f) rows in the input file have an estimated audience of 1000 people. Trying to find better estimates for those using the following countries (%s)" %
         (queries_need_better_estimate, 1.0 * queries_need_better_estimate / total_queries, countries_to_try))
 
 
@@ -146,7 +156,7 @@ for country in countries_to_try:
 
     if usingCache:
         # if using the cache, we need the tupled version to be able to save a string in redis
-        df1000["tupled"] = df1000["targeting"].apply(lambda x: json.dumps(x, sort_keys=True))
+        df1000["tupled"] = df1000["targeting"].apply(lambda x: str(ordered(ast.literal_eval(x))))
 
         # Only keep the rows that we have never explored
         df1000 = df1000[~df1000["tupled"].apply(lambda x: is_bad_country(x, country))]
