@@ -64,23 +64,27 @@
 {"name": "custom_locations", "values": [{"name":"(2.7989, .-60.6322)","distance_unit":"kilometer","latitude":2.7989,"longitude":-60.6322,"primary_city_id":245063,"radius":1,"region_id":458,"country":"BR"}], "location_types":["home","recent"]},
 {"name": "custom_locations", "values": [{"name":"(2.7809, .-60.6322)","distance_unit":"kilometer","latitude":2.7809,"longitude":-60.6322,"primary_city_id":245063,"radius":1,"region_id":458,"country":"BR"}], "location_types":["home","recent"]}
 	],
-    "ages_ranges": [
-        {"min":13},
-        {"min":13, "max":25},
-        {"min":26, "max":65},
-        {"min":65}
-    ],
+	"ages_ranges": [
+		{"min":13},
+		{"min":13, "max":18},
+		{"min":19, "max":25},
+		{"min":26, "max":40},
+		{"min":41, "max":65},
+		{"min":65}
+	],
    "genders": [0, 1, 2],
    "behavior": {
 	"citizenship": [
 	    {"or" : [6026404871583], "name" : "Expats (Venezuela)"},
 	    {"or" : [6015559470583], "name" : "Ex-pats (All)"},
+		{"not": [6015559470583], "name":  "All - Expats" },
 	    null
 	],
 	"access_device" : [
 	    { "or": [6004384041172], "name": "iOS"},
-            { "or": [6004386044572], "name": "Android"},
-	    { "not": [6004384041172, 6004386044572], "name": "Other" }
+        { "or": [6004386044572], "name": "Android"},
+	    { "not": [6004384041172, 6004386044572], "name": "Other" },
+        null
 	]
     },
     "scholarities":[
