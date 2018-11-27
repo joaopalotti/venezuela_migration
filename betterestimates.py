@@ -41,7 +41,7 @@ def prepare_to_reissue(df):
     df["response"] = None
 
 def replace_by_country(row, country = "BR"):
-    for option in ["countries", "regions", "cities"]:
+    for option in ["countries", "regions", "cities", "custom_locations"]:
         if option in row["geo_locations"]:
             del row["geo_locations"][option]
     row["geo_locations"]["countries"] = [country]
@@ -75,6 +75,14 @@ def check_overlap(row):
     if "countries" in row["geo_locations"]:
         for c in row["geo_locations"]["countries"]:
             country_in_country_field.add(c)
+
+    if "custom_locations" in row["geo_locations"]:
+        for c in row["geo_locations"]["custom_locations"]:
+	    country_in_country_field.add(c["country"])
+    
+    if "regions" in row["geo_locations"]:
+        for c in row["geo_locations"]["regions"]:
+	    country_in_country_field.add(c["country_code"])
 
     # The same country was found in the list of countries and list of cities. Flag an error.
     if len(country_in_cities_field.intersection(country_in_country_field)) > 0:
