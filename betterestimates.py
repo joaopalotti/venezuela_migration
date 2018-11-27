@@ -141,12 +141,14 @@ def ordered(obj):
 list_estimates = []
 valid_estimate = [] # checks if a new estimate is in between 1001 and 9999.
 
-queries_need_better_estimate = df[df["mau_audience"] <= 1000].shape[0]
+queries_need_better_estimate = df[df["mau_audience"] == 1000].shape[0]
 total_queries = df.shape[0]
 
 print("%d (%.3f) rows in the input file have an estimated audience of 1000 people. Trying to find better estimates for those using the following countries (%s)" %
         (queries_need_better_estimate, 1.0 * queries_need_better_estimate / total_queries, countries_to_try))
 
+# Transform str into JSON
+df["targeting"] = df["targeting"].apply(lambda x: ast.literal_eval(x))
 
 for country in countries_to_try:
 
@@ -164,20 +166,18 @@ for country in countries_to_try:
 
     if usingCache:
         # if using the cache, we need the tupled version to be able to save a string in redis
-        df1000["tupled"] = df1000["targeting"].apply(lambda x: str(ordered(ast.literal_eval(x))))
+        df1000["tupled"] = df1000["targeting"].apply(lambda x: str(ordered(x)))
+	df1000["tupled_country"] = df1000["targeting"].apply(lambda x: str(ordered(replace_by_country(x, country))))
 
         # Only keep the rows that we have never explored
         df1000 = df1000[~df1000["tupled"].apply(lambda x: is_bad_country(x, country))]
+        df1000 = df1000[~df1000["tupled_country"].apply(lambda x: is_bad_country(x, country))]
 
     df1000_in_country = df1000.copy(deep=True)
     df1000_add_country = df1000.copy(deep=True)
 
     prepare_to_reissue(df1000_in_country)
     prepare_to_reissue(df1000_add_country)
-
-    # Transform string into json.
-    df1000_in_country["targeting"] = df1000_in_country["targeting"].apply(lambda x: ast.literal_eval(x))
-    df1000_add_country["targeting"] = df1000_add_country["targeting"].apply(lambda x: ast.literal_eval(x))
 
     # Modifies "targeting" to include country
     df1000_add_country["targeting"].apply(lambda x: add_country(x, country))
@@ -226,6 +226,12 @@ for country in countries_to_try:
         # Informe redis that these tuples could not find good results
         bad_queries = df1000[~v]
         bad_queries["tupled"].apply(lambda x: append_redis(x, country))
+
+	# Save in_country flag to avoid using it in the future
+    	v_in_country = (df1000_in_country["mau_audience"] > 1000) & (df1000_in_country["mau_audience"] < 10000)
+        bad_queries = df1000_in_country[~v_in_country]
+        bad_queries["targeting"].drop_duplicates().apply(lambda x: str(ordered(x))).apply(lambda x: append_redis(x, country))
+
 
     estimates = valid_add["mau_audience"] - valid_in["mau_audience"]
     estimates.name = country
