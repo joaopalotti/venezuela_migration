@@ -100,7 +100,7 @@ def save_partial_results(df, result, infile):
     df.loc[result.index, "mau_audience"] = result
 
     savefile = "%s.betterestimate" % (infile)
-    df.to_csv(savefile + ".gz", compression='gzip')
+    df.to_csv(savefile + ".gz", compression='gzip', index=False)
 
     print("Saved better estimates for %d queries in file '%s'..." % (result.shape[0], savefile + ".gz"))
 
