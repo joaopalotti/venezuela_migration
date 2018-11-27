@@ -25,8 +25,8 @@ if len(sys.argv) <= 1:
     sys.exit(1)
 
 infile = sys.argv[1]
-countries_to_try = ["CR", "UY"]
-#countries_to_try = ["CR", "UY", "BO", "BR", "FR", "AR"]
+#countries_to_try = ["CR", "UY", "FR", "JP", "BO", "CL"]
+countries_to_try = ["CR"]
 
 # Should we stop re-issuing a query once we found a better estimate for it?
 single_estimation = True
@@ -62,30 +62,30 @@ def check_overlap(row):
     """
     Check overlap between regions. In the current version, only cities inside countries are checked.
 
-    TODO: other regions like counties, zip codes and geo coordenates should be included in this function as well.
+    TODO: missing other regions such as zip codes.
     """
-
-    country_in_cities_field = set([])
+    country_in_location_field = set([])
     country_in_country_field = set([])
 
     if "cities" in row["geo_locations"]:
         for c in row["geo_locations"]["cities"]:
-            country_in_cities_field.add(c["country"])
+            country_in_location_field.add(c["country"])
+    
+    if "custom_locations" in row["geo_locations"]:
+        for c in row["geo_locations"]["custom_locations"]:
+	    country_in_location_field.add(c["country"])
+    
+    if "regions" in row["geo_locations"]:
+        for c in row["geo_locations"]["regions"]:
+	    country_in_location_field.add(c["country_code"])
 
     if "countries" in row["geo_locations"]:
         for c in row["geo_locations"]["countries"]:
             country_in_country_field.add(c)
 
-    if "custom_locations" in row["geo_locations"]:
-        for c in row["geo_locations"]["custom_locations"]:
-	    country_in_country_field.add(c["country"])
-    
-    if "regions" in row["geo_locations"]:
-        for c in row["geo_locations"]["regions"]:
-	    country_in_country_field.add(c["country_code"])
 
     # The same country was found in the list of countries and list of cities. Flag an error.
-    if len(country_in_cities_field.intersection(country_in_country_field)) > 0:
+    if len(country_in_location_field.intersection(country_in_country_field)) > 0:
         return None
 
     # if everything is okay, I just return the original row
@@ -153,7 +153,7 @@ df["targeting"] = df["targeting"].apply(lambda x: ast.literal_eval(x))
 for country in countries_to_try:
 
     print ("USING COUNTRY: ", country)
-    df1000 = df[df["mau_audience"] <= 1000].copy()
+    df1000 = df[df["mau_audience"] == 1000].copy()
     valid = pd.Series(False, index=df1000.index)
 
     if single_estimation:
@@ -195,6 +195,7 @@ for country in countries_to_try:
         continue
 
     try:
+
         res_in_country = watcherAPI.perform_collection_data_on_facebook(df1000_in_country)
         res_add_country = watcherAPI.perform_collection_data_on_facebook(df1000_add_country)
 
