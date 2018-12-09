@@ -1,32 +1,23 @@
-from pysocialwatcher import watcherAPI
-
 import sys
-import json
-import pandas as pd
-
 import os
-
 import requests
+from pysocialwatcher import watcherAPI
 from pysocialwatcher import constants
 
 requests.packages.urllib3.disable_warnings()
 
 option = int(sys.argv[1])
-credential_file = None if len(sys.argv) <= 1 else sys.argv[2]
+credential_file = "./credentials.csv" if len(sys.argv) <= 2 else sys.argv[2]
 
 watcherAPI.config(sleep_time=0, save_every=2000)
 
 watcher = watcherAPI()
+watcher.load_credentials_file(credential_file)
 
-if not credential_file:
-    watcher.load_credentials_file("/home/local/QCRI/jpalotti/github/venezuela_migration/credentials.csv")
-else:
-    watcher.load_credentials_file(credential_file)
-
-stropt = ["", "married", "pendular", "devices", "devices_ven", "immigrants", "colombia_short", "immigrants_global", "syrians", "boavista", "manaus"]
+stropt = ["", "married", "pendular", "devices", "devices_ven", "immigrants", "colombia_short", "immigrants_global", "syrians", "boavista", "manaus", "pibbrasil"]
 
 if option == 1:
-    df = watcher.run_data_collection("/home/local/QCRI/jpalotti/github/venezuela_migration/jsons/married.json")
+    df = watcher.run_data_collection("./jsons/married.json")
 elif option == 2:
     df = watcher.run_data_collection("/home/local/QCRI/jpalotti/github/venezuela_migration/jsons/pendular.json")
 elif option == 3:
@@ -45,6 +36,8 @@ elif option == 9:
     df = watcher.run_data_collection("/home/local/QCRI/jpalotti/github/venezuela_migration/jsons/boavista.json")
 elif option == 10:
     df = watcher.run_data_collection("/home/local/QCRI/jpalotti/github/venezuela_migration/jsons/manaus.json")
+elif option == 11:
+    df = watcher.run_data_collection("./jsons/pibbrasil.json")
 
 time = constants.UNIQUE_TIME_ID
 print("UNIQUE_TIME_ID: %s" % (time) )
