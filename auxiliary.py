@@ -7,37 +7,41 @@ from pysocialwatcher import constants
 requests.packages.urllib3.disable_warnings()
 
 option = int(sys.argv[1])
-credential_file = "./credentials.csv" if len(sys.argv) <= 2 else sys.argv[2]
+credential_file = "./credentials_masoomali.csv" if len(sys.argv) <= 2 else sys.argv[2]
 
-watcherAPI.config(sleep_time=0, save_every=2000)
+watcherAPI.config(sleep_time=0, save_every=10000)
 
 watcher = watcherAPI()
 watcher.load_credentials_file(credential_file)
 
-stropt = ["", "married", "pendular", "devices", "devices_ven", "immigrants", "colombia_short", "immigrants_global", "syrians", "boavista", "manaus", "pibbrasil"]
+stropt = ["", "married", "pendular", "devices", "devices_ven", "immigrants", "colombia_short", "immigrants_global", "syrians", "boavista", "manaus", "pibbrasil", "immigrants_unchr", "superdevices"]
 
 if option == 1:
     df = watcher.run_data_collection("./jsons/married.json")
 elif option == 2:
-    df = watcher.run_data_collection("/home/local/QCRI/jpalotti/github/venezuela_migration/jsons/pendular.json")
+    df = watcher.run_data_collection("./jsons/pendular.json")
 elif option == 3:
-    df = watcher.run_data_collection("/home/local/QCRI/jpalotti/github/venezuela_migration/jsons/devices.json")
+    df = watcher.run_data_collection("./jsons/devices.json")
 elif option == 4:
-    df = watcher.run_data_collection("/home/local/QCRI/jpalotti/github/venezuela_migration/jsons/venezuelans_devices.json")
+    df = watcher.run_data_collection("./jsons/venezuelans_devices.json")
 elif option == 5:
-    df = watcher.run_data_collection("/home/local/QCRI/jpalotti/github/venezuela_migration/jsons/immigrants.json")
+    df = watcher.run_data_collection("./jsons/immigrants.json")
 elif option == 6:
-    df = watcher.run_data_collection("/home/local/QCRI/jpalotti/github/venezuela_migration/jsons/main_collection_short.json")
+    df = watcher.run_data_collection("./jsons/main_collection_short.json")
 elif option == 7:
-    df = watcher.run_data_collection("/home/local/QCRI/jpalotti/github/venezuela_migration/jsons/immigrants_global.json")
+    df = watcher.run_data_collection("./jsons/immigrants_global.json")
 elif option == 8:
-    df = watcher.run_data_collection("/home/local/QCRI/jpalotti/github/venezuela_migration/jsons/syrians.json")
+    df = watcher.run_data_collection("./jsons/syrians.json")
 elif option == 9:
-    df = watcher.run_data_collection("/home/local/QCRI/jpalotti/github/venezuela_migration/jsons/boavista.json")
+    df = watcher.run_data_collection("./jsons/boavista.json")
 elif option == 10:
-    df = watcher.run_data_collection("/home/local/QCRI/jpalotti/github/venezuela_migration/jsons/manaus.json")
+    df = watcher.run_data_collection("./jsons/manaus.json")
 elif option == 11:
     df = watcher.run_data_collection("./jsons/pibbrasil.json")
+elif option == 12:
+    df = watcher.run_data_collection("./jsons/immigrants_global_unhcr.json")
+elif option == 13:
+    df = watcher.run_data_collection("./jsons/superdevices.json")
 
 time = constants.UNIQUE_TIME_ID
 print("UNIQUE_TIME_ID: %s" % (time) )
