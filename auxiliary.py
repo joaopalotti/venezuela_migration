@@ -14,8 +14,8 @@ watcherAPI.config(sleep_time=0, save_every=10000)
 watcher = watcherAPI()
 watcher.load_credentials_file(credential_file)
 
-stropt = ["", "married", "pendular", "devices", "devices_ven", "immigrants", "colombia_short", "immigrants_global", "syrians", "boavista", "manaus", 
-		"pibbrasil", "immigrants_unchr", "superdevices", "sp_vs_nonsp", "ven_in_us", "ven_in_venstates"]
+stropt = ["", "married", "pendular", "devices", "devices_ven", "immigrants", "colombia_short", "immigrants_global", "syrians", "boavista", "manaus",
+		"pibbrasil", "immigrants_unchr", "superdevices", "sp_vs_nonsp", "ven_in_us", "ven_in_venstates", "georgians"]
 
 if option == 1:
     df = watcher.run_data_collection("./jsons/married.json")
@@ -49,6 +49,8 @@ elif option == 15:
     df = watcher.run_data_collection("./jsons/ven_in_us.json")
 elif option == 16:
     df = watcher.run_data_collection("./jsons/ven_in_venstates.json")
+elif option == 17:
+    df = watcher.run_data_collection("./jsons/georgians.json")
 
 time = constants.UNIQUE_TIME_ID
 print("UNIQUE_TIME_ID: %s" % (time) )
