@@ -235,7 +235,7 @@
     "ages_ranges": [
         {"min":13}
     ],
-   "genders": [0],
+   "genders": [0,1,2],
    "languages":[
 	{"name" : "Arabic", "values" : [28]},
 	{"name" : "English", "values" : [1001]},
