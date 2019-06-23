@@ -1,4 +1,3 @@
-import json
 import pandas as pd
 import ast
 import sys
@@ -29,10 +28,10 @@ df_error = pd.merge(df_error, df_fix[["tupled","dau_audience","mau_audience"]], 
 df_error["mau_audience"] = df_error["mau_audience"].where(df_error["mau_audience_fixed"].isnull(), df_error["mau_audience_fixed"])
 df_error["dau_audience"] = df_error["dau_audience"].where(df_error["dau_audience_fixed"].isnull(), df_error["dau_audience_fixed"])
 
-del df_error["mau_audience_fixed"]
-del df_error["dau_audience_fixed"]
-del df_error["tupled"]
-del df_error["Unnamed: 0"]
+#del df_error["mau_audience_fixed"]
+#del df_error["dau_audience_fixed"]
+#del df_error["tupled"]
+#del df_error["Unnamed: 0"]
 
 df_error.to_csv(file_with_error + ".fixed")
 print("Created " + file_with_error + ".fixed")
