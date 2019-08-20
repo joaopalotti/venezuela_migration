@@ -1,0 +1,66 @@
+{   "name": "MainCollection",
+	"geo_locations": [
+		{"name": "regions", "values":[{"key":"3936", "country_code":"VE", "name": "Aragua"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3933", "country_code":"VE", "name": "Amazonas"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3934", "country_code":"VE", "name": "Anzoátegui"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3935", "country_code":"VE", "name": "Apure"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3941", "country_code":"VE", "name": "Delta Amacuro"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3955", "country_code":"VE", "name": "Federal Dependencies of Venezuela"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3945", "country_code":"VE", "name": "Mérida"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3956", "country_code":"VE", "name": "Capital District"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3938", "country_code":"VE", "name": "Bolívar"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3950", "country_code":"VE", "name": "Sucre"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3946", "country_code":"VE", "name": "Miranda"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3937", "country_code":"VE", "name": "Barinas"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3944", "country_code":"VE", "name": "Lara"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3952", "country_code":"VE", "name": "Trujillo"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3940", "country_code":"VE", "name": "Cojedes"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3939", "country_code":"VE", "name": "Carabobo"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3957", "country_code":"VE", "name": "Vargas"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3947", "country_code":"VE", "name": "Monagas"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3949", "country_code":"VE", "name": "Portuguesa"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3943", "country_code":"VE", "name": "Guárico"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3951", "country_code":"VE", "name": "Táchira"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3953", "country_code":"VE", "name": "Yaracuy"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3948", "country_code":"VE", "name": "Nueva Esparta"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3954", "country_code":"VE", "name": "Zulia"}], "location_types": ["home", "recent"]},
+		{"name": "regions", "values":[{"key":"3942", "country_code":"VE", "name": "Falcón"}], "location_types": ["home", "recent"]}
+	],
+	"ages_ranges": [
+		{"min":13},
+		{"min":13, "max":18},
+		{"min":19, "max":25},
+		{"min":26, "max":40},
+		{"min":41, "max":65},
+		{"min":65}
+	],
+	"genders": [0, 1, 2],
+	"behavior": {
+		"citizenship": [
+			{"or" : [6026404871583], "name" : "Expats (Venezuela)"},
+			{"or" : [6015559470583], "name" : "Ex-pats (All)"},
+			{"not": [6015559470583], "name":  "All - Expats" },
+			null
+			],
+		"access_device" : [
+			{ "or": [6004384041172], "name": "iOS"},
+			{ "or": [6004386044572], "name": "Android"},
+			{ "not": [6004384041172, 6004386044572], "name": "Other" },
+			null
+		]
+	},
+	"scholarities":[
+	{
+		"name" : "Graduated",
+		"or" : [3,7,8,9,11]
+	},
+	{
+		"name" : "No Degree",
+		"or" : [1,12,13]
+	},{
+		"name" : "High School",
+		"or" : [2,4,5,6,10]
+	},
+	null
+		]
+}

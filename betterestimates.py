@@ -9,7 +9,7 @@ import requests
 requests.packages.urllib3.disable_warnings()
 
 usingCache = True
-expiration_in_sec =  2592000
+expiration_in_sec = 432000
 # Some options:
 # 5 days -> 432000
 # 30 days -> 2.592e+6
@@ -17,7 +17,7 @@ expiration_in_sec =  2592000
 if usingCache:
     # To create a cache that verifies if a query is useless
     import redis
-    r = redis.Redis(host='localhost', port=6379, db=0)
+    r = redis.Redis(host='localhost', port=6379, db=1)
     print("Using Redis as a cache to avoid unfruitful API calls.")
 
 if len(sys.argv) <= 1:
@@ -25,10 +25,10 @@ if len(sys.argv) <= 1:
     sys.exit(1)
 
 infile = sys.argv[1]
-countries_to_try = ["CR" , "UY", "FR", "JP", "BO", "CL", "PA", "US", "ES", "BR", "AR", "PT", "CA", "PE", "EC", "MX", "NI"] 
+#countries_to_try = ["CR" , "UY", "FR", "JP", "BO", "CL", "PA", "US", "ES", "BR", "AR", "PT", "CA", "PE", "EC", "MX", "NI", "DE"] 
 #countries_to_try = ["PA", "US", "ES"] 
-#countries_to_try = ["CZ"]
-#countries_to_try = ["US"]
+countries_to_try = ["CR"]
+#countries_to_try = ["BR"]
 
 # Should we stop re-issuing a query once we found a better estimate for it?
 single_estimation = True
@@ -84,7 +84,10 @@ def check_overlap(row):
     
     if "regions" in row["geo_locations"]:
         for c in row["geo_locations"]["regions"]:
-	    country_in_location_field.add(c["country_code"])
+	    if "country_code" in c:
+		country_in_location_field.add(c["country_code"])
+	    elif "country" in c:
+		country_in_location_field.add(c["country"])
 
     if "countries" in row["geo_locations"]:
         for c in row["geo_locations"]["countries"]:

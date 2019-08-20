@@ -252,7 +252,7 @@
         {"name" : "Georgian", "values" : [72] },
         null
     ],
-   "genders": [0],
+   "genders": [0,1,2],
    "behavior": {
 	"citizenship": [
 	    {"or" :[6015559470583], "name":  "Lives abroad"},
